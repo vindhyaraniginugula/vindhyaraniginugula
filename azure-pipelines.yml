@@ -16,7 +16,7 @@ parameters:
   - name: Application(client)ID
     type: string
     default: ""
-
+#${{ parameters.env }}
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
