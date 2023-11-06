@@ -12,6 +12,11 @@ pool:
 resources:
 - repo: self
 
+parameters:
+  - name: Application(client)ID
+    type: string
+    default: "test"
+
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
@@ -21,12 +26,32 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
-- task: PowerShell@2
+- task: AzurePowerShell@5
   inputs:
-    targetType: 'inline'
-    script: |
-      # Write your PowerShell commands here.
-      
-      Write-Host "Hello World"
+    azureSubscription: 'sub-up-atlas-mgmt(2)(93c2ecdc-d65f-4cbc-af13-71e3b5317f67)'
+    ScriptType: 'InlineScript'
+    Inline: |
+      Write-Host 'Starting upload to SharePoint via Logic App'
+           
+           
+           Write-Host 'Retrieving Logic App Url'
+           $resourceGroup = 'rg-up-atlas-mgmt'
+           $logicAppName = 'getExpiringApps'
+           $triggerName = 'manual'
+           $logicAppCallbackUrl = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name $logicAppName -TriggerName $triggerName
+           $logicAppUrl = $logicAppCallbackUrl.Value
+           
+           $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+           $headers.Add("Document-Path", "[SharePoint-Folder]")
+           $headers.Add("Document-Name", "$(BUILD.DEFINITIONNAME).html")
+           $headers.Add("Document-SharePoint-Site", "https://acme.sharepoint.com/sites/mysite")
+           
+           $body = Get-Content -Path $(Build.ArtifactStagingDirectory)\MyDoc.html  -Raw -Encoding UTF8
+           
+           $response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $body -ContentType 'text/plain; charset=utf-8'
+           
+           Write-Host 'Upload to SharePoint via Logic App complete'
+           Write-Host $response 
+    azurePowerShellVersion: 'LatestVersion'
 
 
