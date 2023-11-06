@@ -31,7 +31,7 @@ steps:
     azureSubscription: 'sub-up-atlas-mgmt(2)(93c2ecdc-d65f-4cbc-af13-71e3b5317f67)'
     ScriptType: 'InlineScript'
     Inline: |
-      Write-Host 'Starting upload to SharePoint via Logic App'
+      Write-Host 'Starting secret renewal'
            
            
            Write-Host 'Retrieving Logic App Url'
@@ -42,14 +42,14 @@ steps:
            $logicAppUrl = $logicAppCallbackUrl.Value
            
            $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-           $headers.Add("Document-Path", "[SharePoint-Folder]")
-           $headers.Add("Document-Name", "$(BUILD.DEFINITIONNAME).html")
-           $headers.Add("Document-SharePoint-Site", "https://acme.sharepoint.com/sites/mysite")
+           $headers.Add("Content-Type", "application/json")
+
            
-           $body = Get-Content -Path $(Build.ArtifactStagingDirectory)\MyDoc.html  -Raw -Encoding UTF8
+           $body = ${{ parameters.Application(client)ID }}
            
-           $response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $body -ContentType 'text/plain; charset=utf-8'
-           
+           $response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $body 
+           #$response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $body -ContentType 'text/plain; charset=utf-8'
+          
            Write-Host 'Upload to SharePoint via Logic App complete'
            Write-Host $response 
     azurePowerShellVersion: 'LatestVersion'
