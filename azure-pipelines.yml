@@ -15,7 +15,7 @@ resources:
 parameters:
   - name: Application(client)ID
     type: string
-    default: "test"
+    default: ""
 
 steps:
 - script: echo Hello, world!
