@@ -16,15 +16,8 @@ parameters:
   - name: application_client_ID
     type: string
     default: ""
-#${{ parameters.env }}
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+steps:
 
 - task: AzurePowerShell@5
   inputs:
@@ -36,7 +29,7 @@ steps:
            
            Write-Host 'Retrieving Logic App Url'
            $resourceGroup = 'rg-up-atlas-mgmt'
-           $logicAppName = 'getExpiringApps'
+           $logicAppName = 'renewAppRegistrations'
            $triggerName = 'manual'
            $logicAppCallbackUrl = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name $logicAppName -TriggerName $triggerName
            $logicAppUrl = $logicAppCallbackUrl.Value
