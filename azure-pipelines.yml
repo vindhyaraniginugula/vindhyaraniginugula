@@ -13,7 +13,7 @@ resources:
 - repo: self
 
 parameters:
-  - name: Application(client)ID
+  - name: Application-client-ID
     type: string
     default: ""
 #${{ parameters.env }}
@@ -45,7 +45,7 @@ steps:
            $headers.Add("Content-Type", "application/json")
 
            
-           $body = ${{ parameters.Application(client)ID }}
+           $body = ${{ parameters.Application-client-ID }}
            
            $response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $body 
            #$response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $body -ContentType 'text/plain; charset=utf-8'
