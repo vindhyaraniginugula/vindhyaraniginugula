@@ -15,7 +15,7 @@ resources:
 parameters:
   - name: application_client_ID
     type: string
-    default: ""
+    default: "e1005577-3e06-447d-b7e9-61c897ee73cc"
 
 steps:
 
