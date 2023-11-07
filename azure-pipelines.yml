@@ -17,34 +17,46 @@ parameters:
     type: string
     default: "e1005577-3e06-447d-b7e9-61c897ee73cc"
 
-steps:
+stages:
 
-- task: AzurePowerShell@5
-  inputs:
-    azureSubscription: 'sub-up-atlas-mgmt(2)(93c2ecdc-d65f-4cbc-af13-71e3b5317f67)'
-    ScriptType: 'InlineScript'
-    Inline: |
-      Write-Host 'Starting secret renewal'
-           
-           
-           Write-Host 'Retrieving Logic App Url'
-           $resourceGroup = 'rg-up-atlas-mgmt'
-           $logicAppName = 'renewAppRegistrations'
-           $triggerName = 'manual'
-           $logicAppCallbackUrl = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name $logicAppName -TriggerName $triggerName
-           $logicAppUrl = $logicAppCallbackUrl.Value
-           
-           $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-           $headers.Add("Content-Type", "application/json")
+- stage: Renew_app_secret
+  displayName: Renew App Registration Secret
+  jobs:
+    - deployment: Renew_app_secret
+      displayName: Renew App Registration Secret
+      environment: Renew_app_secret
+      strategy:
+        runOnce:
+          deploy:
+            steps:
 
-           $jsonData = @{appID = "${{ parameters.application_client_ID }}"
-            } | ConvertTo-Json
-           
-           $response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $jsonData 
-           #$response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $body -ContentType 'text/plain; charset=utf-8'
-          
-           Write-Host 'Secret of application ${{ parameters.application_client_ID }} Renewed'
-           Write-Host $response 
-    azurePowerShellVersion: 'LatestVersion'
+            - task: AzurePowerShell@5
+              inputs:
+                azureSubscription: 'sub-up-atlas-mgmt(2)(93c2ecdc-d65f-4cbc-af13-71e3b5317f67)'
+                ScriptType: 'InlineScript'
+                Inline: |
+                  Write-Host 'Starting secret renewal'
+                      
+                      
+                      Write-Host 'Retrieving Logic App Url'
+                      $resourceGroup = 'rg-up-atlas-mgmt'
+                      $logicAppName = 'renewAppRegistrations'
+                      $triggerName = 'manual'
+                      $logicAppCallbackUrl = Get-AzLogicAppTriggerCallbackUrl -ResourceGroupName $resourceGroup -Name $logicAppName -TriggerName $triggerName
+                      $logicAppUrl = $logicAppCallbackUrl.Value
+                      
+                      $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+                      $headers.Add("Content-Type", "application/json")
+
+                      $jsonData = @{appID = "${{ parameters.application_client_ID }}"
+                        } | ConvertTo-Json
+                      
+                      $response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $jsonData 
+                      #$response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $body -ContentType 'text/plain; charset=utf-8'
+                      
+                      Write-Host 'Secret of application ${{ parameters.application_client_ID }} Renewed'
+                      Write-Host $response 
+                azurePowerShellVersion: 'LatestVersion'
+
 
 
