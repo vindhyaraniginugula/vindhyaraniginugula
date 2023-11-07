@@ -43,7 +43,7 @@ steps:
            $response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $jsonData 
            #$response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $body -ContentType 'text/plain; charset=utf-8'
           
-           Write-Host 'Secret Renewed'
+           Write-Host 'Secret of application ${{ parameters.application_client_ID }} Renewed'
            Write-Host $response 
     azurePowerShellVersion: 'LatestVersion'
 
