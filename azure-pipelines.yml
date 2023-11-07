@@ -37,12 +37,10 @@ steps:
            $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
            $headers.Add("Content-Type", "application/json")
 
+           $jsonData = @{appID = "${{ parameters.application_client_ID }}"
+            } | ConvertTo-Json
            
-           $body = {
-             "appID" : ${{ parameters.application_client_ID }}
-             }
-           
-           $response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $body 
+           $response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $jsonData 
            #$response = Invoke-RestMethod $logicAppUrl -Method 'POST' -Headers $headers -Body $body -ContentType 'text/plain; charset=utf-8'
           
            Write-Host 'Upload to SharePoint via Logic App complete'
