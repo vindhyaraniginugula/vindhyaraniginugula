@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+azure-ai-openai
+azure-search-documents
+azure-identity
+azure-keyvault-secrets
+python-dotenv
